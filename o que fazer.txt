@@ -1,0 +1,3 @@
+Adicionar diferentes backgrounds usando timer
+Desenhar um tiro, ou pegar imagem de um tiro
+Adicionar música de fundo
