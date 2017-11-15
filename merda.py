@@ -4,6 +4,8 @@ from pygame.locals import *
 largura= 1200
 altura=700
 
+v=8
+
 class bala(pygame.sprite.Sprite):
     def __init__(self, posx, posy):
         pygame.sprite.Sprite.__init__(self)
@@ -26,6 +28,8 @@ class naveespacial(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.imagemnave = pygame.image.load("imagem/nave.png")
+        pygame.mixer.music.load("Sons/37.mp3")
+        pygame.mixer.music.play(3)
 
         self.rect = self.imagemnave.get_rect()
         self.rect.centerx = largura / 2 
@@ -35,16 +39,25 @@ class naveespacial(pygame.sprite.Sprite):
         self.vida = True
         self.velocidade = 20
 
-    def movimento(self):
-        if self.vida == True:
+    def movimentoDireita(self):
+        self.rect.right += self.velocidade 
+        self.__movimento()
+        
+    def movimentoEsquerda(self):
+        self.rect.left -= self.velocidade 
+        self.__movimento()
+        
+    def __movimento(self):
+        if self.vida==True:
             if self.rect.left <= 0:
-                self.rect.left = 0
-
+                self.rect.left=0
+                
             elif self.rect.right > 1200:
-                self.rect.left = 1200
+                self.rect.right = 1200
+
 
     def disparar(self, x, y):
-        minhabala = bala(x,y)
+        minhabala = bala(x-10,y-50)
         self.listadisparo.append(minhabala)
         print("disparou")
 
@@ -62,8 +75,10 @@ def invasaoespaco():
 
     balaprojetil = bala(largura/ 2, altura - 60)
 
+    relogio = pygame.time.Clock()
+    
     while True:
-        jogador.movimento()
+        relogio.tick(60)
         balaprojetil.trajetoria()
         for evento in pygame.event.get():
             if evento.type == QUIT:
@@ -72,10 +87,10 @@ def invasaoespaco():
 
             if evento.type == pygame.KEYDOWN:
                 if evento.key == K_LEFT:
-                    jogador.rect.left -= jogador.velocidade
+                    jogador.movimentoEsquerda()
 
                 elif evento.key ==K_RIGHT:
-                    jogador.rect.right += jogador.velocidade
+                    jogador.movimentoDireita()
 
                 elif evento.key == K_SPACE:
                     x,y = jogador.rect.center
@@ -89,11 +104,12 @@ def invasaoespaco():
             for x in jogador.listadisparo:
                 x.colocar(tela)
                 x.trajetoria()
-                if x.rect.top < 100:
+                if x.rect.top < 0:
                     jogador.listadisparo.remove(x)
         pygame.display.update()
 
 invasaoespaco()
+
         
         
 
